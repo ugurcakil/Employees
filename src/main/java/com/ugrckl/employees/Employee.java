@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Employee {
+public abstract class Employee implements IEmployee{
 
     protected final DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("M/d/yyyy");
     protected final NumberFormat moneyFormat = NumberFormat.getCurrencyInstance();
@@ -35,15 +35,20 @@ public abstract class Employee {
     }
 
     // Flinstone, Wilma5, 3/3/1910, Analyst, {projectCount=9}
-    public static final Employee createEmployee(String employeeText){
+    public static final IEmployee createEmployee(String employeeText){
         Matcher peopleMat = Employee.PEOPLE_PAT.matcher(employeeText);
+        class myLocalClass extends Employee {
+            public int getSalary() {
+                return 5;
+            }
+        }
         if (peopleMat.find()) {
             return switch (peopleMat.group("role")) {
                 case "Programmer" -> new Programmer(employeeText);
                 case "Manager" -> new Manager(employeeText);
                 case "Analyst" -> new Analyst(employeeText);
                 case "CEO" -> new CEO(employeeText);
-                default -> new DummyEmployee();
+                default -> () -> 0;
             };
         }else {
             return new DummyEmployee();
@@ -55,7 +60,6 @@ public abstract class Employee {
     public double getBonus() {
         return getSalary() * 1.10;
     }
-
     @Override
     public String toString() {
         return String.format("%s, %s: %s - %s", lastName, firstName, moneyFormat.format(getSalary()),moneyFormat.format(getBonus()));
@@ -63,9 +67,12 @@ public abstract class Employee {
 
     private static final class DummyEmployee extends Employee {
         @Override
-        public int getSalary() {
+        public int getSalary()
+        {
             return 0;
         }
     }
+
+
 
 }

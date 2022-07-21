@@ -1,6 +1,9 @@
 package com.ugrckl.employees;
 
+import org.w3c.dom.ls.LSOutput;
+
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 
 public class Main {
@@ -26,9 +29,11 @@ public class Main {
                 """;
 
         Matcher peopleMat = Employee.PEOPLE_PAT.matcher(peopleText);
+        Programmer coder = new Programmer(peopleText);
+        coder.cook("Hamburger");
 
         int totalSalaries = 0;
-        Employee employee = null;
+        IEmployee employee = null;
         while(peopleMat.find()){
             employee = Employee.createEmployee(peopleMat.group());
             System.out.println(employee.toString());
@@ -37,5 +42,9 @@ public class Main {
         }
         NumberFormat currencyInstance = NumberFormat.getCurrencyInstance();
         System.out.printf("The total payout should be %s",currencyInstance.format(totalSalaries));
+
+        Weirdo larry = new Weirdo("David","Larry", LocalDate.of(1950,1,1));
+        Weirdo jake = new Weirdo("Snake","Jake");
     }
+
 }
